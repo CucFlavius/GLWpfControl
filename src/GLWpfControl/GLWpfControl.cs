@@ -102,10 +102,6 @@ namespace OpenTK.Wpf
                 }
             };
 
-            // Inheriting directly from a FrameworkElement has issues with receiving certain events -- register for these events directly
-            EventManager.RegisterClassHandler(typeof(Control), Keyboard.KeyDownEvent, new KeyEventHandler(OnKeyDown), true);
-            EventManager.RegisterClassHandler(typeof(Control), Keyboard.KeyUpEvent, new KeyEventHandler(OnKeyUp), true);
-
             Loaded += (a, b) => {
                 InvalidateVisual();
             };
@@ -140,28 +136,6 @@ namespace OpenTK.Wpf
         {
             _renderer?.SetSize(0,0, 1, 1, Format.X8R8G8B8);
         }
-
-        // Raise the events so they're received if you subscribe to the base control's events
-        // There are others that should probably be sent -- focus doesn't seem to work for whatever reason
-        internal void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.OriginalSource != this)
-            {
-                KeyEventArgs args = new KeyEventArgs(e.KeyboardDevice, e.InputSource, e.Timestamp, e.Key);
-                args.RoutedEvent = Keyboard.KeyDownEvent;
-                RaiseEvent(args);
-            }
-        }
-        internal void OnKeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.OriginalSource != this)
-            {
-                KeyEventArgs args = new KeyEventArgs(e.KeyboardDevice, e.InputSource, e.Timestamp, e.Key);
-                args.RoutedEvent = Keyboard.KeyUpEvent;
-                RaiseEvent(args);
-            }
-        }
-
 
         private void OnCompTargetRender(object sender, EventArgs e)
         {
